@@ -1,4 +1,4 @@
-package app.quantun.b2b.config;
+package app.quantun.eb2c.config;
 
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;

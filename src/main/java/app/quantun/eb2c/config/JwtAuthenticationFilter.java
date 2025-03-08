@@ -1,7 +1,7 @@
-package app.quantun.b2b.config;
+package app.quantun.eb2c.config;
 
-import app.quantun.b2b.config.JwtTokenProvider;
-import app.quantun.b2b.service.CustomUserDetailsService;
+import app.quantun.eb2c.config.JwtTokenProvider;
+import app.quantun.eb2c.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

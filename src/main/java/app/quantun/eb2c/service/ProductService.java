@@ -1,9 +1,9 @@
-package app.quantun.b2b.service;
+package app.quantun.eb2c.service;
 
 
-import app.quantun.b2b.model.contract.request.ProductRequestDTO;
-import app.quantun.b2b.model.contract.response.ProductResponseDTO;
-import app.quantun.b2b.model.entity.bussines.Product;
+import app.quantun.eb2c.model.contract.request.ProductRequestDTO;
+import app.quantun.eb2c.model.contract.response.ProductResponseDTO;
+import app.quantun.eb2c.model.entity.bussines.Product;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;

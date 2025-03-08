@@ -1,4 +1,4 @@
-package app.quantun.b2b.config;
+package app.quantun.eb2c.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,4 +1,4 @@
-package app.quantun.b2b.model.contract.request;
+package app.quantun.eb2c.model.contract.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

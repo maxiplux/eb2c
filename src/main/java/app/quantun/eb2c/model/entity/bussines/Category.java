@@ -1,7 +1,7 @@
-package app.quantun.b2b.model.entity.bussines;
+package app.quantun.eb2c.model.entity.bussines;
 
 
-import app.quantun.b2b.model.entity.AuditModel;
+import app.quantun.eb2c.model.entity.AuditModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

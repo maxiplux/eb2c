@@ -1,9 +1,9 @@
-package app.quantun.b2b.rest;
+package app.quantun.eb2c.rest;
 
 
-import app.quantun.b2b.model.contract.request.ProductRequestDTO;
-import app.quantun.b2b.model.contract.response.ProductResponseDTO;
-import app.quantun.b2b.service.ProductService;
+import app.quantun.eb2c.model.contract.request.ProductRequestDTO;
+import app.quantun.eb2c.model.contract.response.ProductResponseDTO;
+import app.quantun.eb2c.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

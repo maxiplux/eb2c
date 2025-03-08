@@ -1,7 +1,7 @@
-package app.quantun.b2b.service;
+package app.quantun.eb2c.service;
 
-import app.quantun.b2b.model.contract.request.OrganizationRequestDTO;
-import app.quantun.b2b.model.contract.response.OrganizationResponseDTO;
+import app.quantun.eb2c.model.contract.request.OrganizationRequestDTO;
+import app.quantun.eb2c.model.contract.response.OrganizationResponseDTO;
 
 import java.util.List;
 

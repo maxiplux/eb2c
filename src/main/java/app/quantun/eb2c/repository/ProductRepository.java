@@ -1,7 +1,7 @@
-package app.quantun.b2b.repository;
+package app.quantun.eb2c.repository;
 
 
-import app.quantun.b2b.model.entity.bussines.Product;
+import app.quantun.eb2c.model.entity.bussines.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

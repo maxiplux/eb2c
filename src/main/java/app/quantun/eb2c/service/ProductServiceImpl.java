@@ -1,10 +1,10 @@
-package app.quantun.b2b.service;
+package app.quantun.eb2c.service;
 
 
-import app.quantun.b2b.model.contract.request.ProductRequestDTO;
-import app.quantun.b2b.model.contract.response.ProductResponseDTO;
-import app.quantun.b2b.model.entity.bussines.Product;
-import app.quantun.b2b.repository.ProductRepository;
+import app.quantun.eb2c.model.contract.request.ProductRequestDTO;
+import app.quantun.eb2c.model.contract.response.ProductResponseDTO;
+import app.quantun.eb2c.model.entity.bussines.Product;
+import app.quantun.eb2c.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

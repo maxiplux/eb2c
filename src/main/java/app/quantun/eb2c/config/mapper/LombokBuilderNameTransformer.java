@@ -1,4 +1,4 @@
-package app.quantun.b2b.config.mapper;
+package app.quantun.eb2c.config.mapper;
 
 import org.modelmapper.internal.util.Strings;
 import org.modelmapper.spi.NameTransformer;

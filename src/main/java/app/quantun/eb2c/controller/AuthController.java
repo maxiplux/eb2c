@@ -1,10 +1,10 @@
-package app.quantun.b2b.controller;
+package app.quantun.eb2c.controller;
 
 
-import app.quantun.b2b.config.JwtTokenProvider;
-import app.quantun.b2b.model.contract.LoginRequest;
-import app.quantun.b2b.repository.UserRepository;
-
+import app.quantun.eb2c.config.JwtTokenProvider;
+import app.quantun.eb2c.model.contract.LoginRequest;
+import app.quantun.eb2c.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 

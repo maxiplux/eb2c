@@ -1,8 +1,8 @@
-package app.quantun.b2b.service;
+package app.quantun.eb2c.service;
 
 
-import app.quantun.b2b.model.entity.core.User;
-import app.quantun.b2b.repository.UserRepository;
+import app.quantun.eb2c.model.entity.core.User;
+import app.quantun.eb2c.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

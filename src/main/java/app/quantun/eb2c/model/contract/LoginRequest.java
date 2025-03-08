@@ -1,4 +1,4 @@
-package app.quantun.b2b.model.contract;
+package app.quantun.eb2c.model.contract;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

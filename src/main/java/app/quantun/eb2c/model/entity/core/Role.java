@@ -1,4 +1,4 @@
-package app.quantun.b2b.model.entity.core;
+package app.quantun.eb2c.model.entity.core;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

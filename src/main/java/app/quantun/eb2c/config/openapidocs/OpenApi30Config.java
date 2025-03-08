@@ -1,4 +1,4 @@
-package app.quantun.b2b.config.openapidocs;
+package app.quantun.eb2c.config.openapidocs;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

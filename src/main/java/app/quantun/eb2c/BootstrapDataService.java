@@ -1,15 +1,14 @@
-package app.quantun.b2b;
+package app.quantun.eb2c;
 
 
-import app.quantun.b2b.model.entity.core.Role;
-import app.quantun.b2b.model.entity.core.User;
-import app.quantun.b2b.repository.RoleRepository;
-import app.quantun.b2b.repository.UserRepository;
+import app.quantun.eb2c.model.entity.core.Role;
+import app.quantun.eb2c.model.entity.core.User;
+import app.quantun.eb2c.repository.RoleRepository;
+import app.quantun.eb2c.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

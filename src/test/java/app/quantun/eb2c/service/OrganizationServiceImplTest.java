@@ -1,9 +1,9 @@
-package app.quantun.b2b.service;
+package app.quantun.eb2c.service;
 
-import app.quantun.b2b.model.contract.request.OrganizationRequestDTO;
-import app.quantun.b2b.model.contract.response.OrganizationResponseDTO;
-import app.quantun.b2b.model.entity.bussines.Organization;
-import app.quantun.b2b.repository.OrganizationRepository;
+import app.quantun.eb2c.model.contract.request.OrganizationRequestDTO;
+import app.quantun.eb2c.model.contract.response.OrganizationResponseDTO;
+import app.quantun.eb2c.model.entity.bussines.Organization;
+import app.quantun.eb2c.repository.OrganizationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

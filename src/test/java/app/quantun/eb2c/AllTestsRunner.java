@@ -1,4 +1,4 @@
-package app.quantun.b2b;
+package app.quantun.eb2c;
 
 import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
@@ -8,7 +8,7 @@ import org.junit.platform.suite.api.Suite;
  * This class serves as a test suite runner for executing all tests in the specified package.
  */
 @Suite
-@SelectPackages("app.quantun.b2b") // Replace with your project's test package
+@SelectPackages("app.quantun.eb2c") // Replace with your project's test package
 public class AllTestsRunner {
     // This class serves as a test suite runner
 }

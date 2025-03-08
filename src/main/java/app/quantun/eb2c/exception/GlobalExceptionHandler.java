@@ -1,4 +1,4 @@
-package app.quantun.b2b.exception;
+package app.quantun.eb2c.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;

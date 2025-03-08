@@ -1,7 +1,7 @@
-package app.quantun.b2b.config;
+package app.quantun.eb2c.config;
 
-import app.quantun.b2b.model.contract.UserInfoDTO;
-import app.quantun.b2b.repository.UserRepository;
+import app.quantun.eb2c.model.contract.UserInfoDTO;
+import app.quantun.eb2c.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
