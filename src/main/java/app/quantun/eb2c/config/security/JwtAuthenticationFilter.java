@@ -1,6 +1,5 @@
-package app.quantun.eb2c.config;
+package app.quantun.eb2c.config.security;
 
-import app.quantun.eb2c.config.JwtTokenProvider;
 import app.quantun.eb2c.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

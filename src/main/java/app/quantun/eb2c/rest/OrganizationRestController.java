@@ -26,9 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Organization API", description = "Operations for managing organizations")
 public class OrganizationRestController {
-    
+
     private final OrganizationService organizationService;
-    
+
     @Operation(summary = "Create a new organization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Organization created successfully",
@@ -41,7 +41,7 @@ public class OrganizationRestController {
         OrganizationResponseDTO responseDTO = organizationService.createOrganization(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-    
+
     @Operation(summary = "Get all organizations")
     @ApiResponse(responseCode = "200", description = "List of organizations retrieved successfully",
             content = @Content(schema = @Schema(implementation = OrganizationResponseDTO.class)))
@@ -50,7 +50,7 @@ public class OrganizationRestController {
         List<OrganizationResponseDTO> organizations = organizationService.getAllOrganizations();
         return ResponseEntity.ok(organizations);
     }
-    
+
     @Operation(summary = "Get organization by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Organization found",
@@ -63,7 +63,7 @@ public class OrganizationRestController {
         OrganizationResponseDTO responseDTO = organizationService.getOrganizationById(id);
         return ResponseEntity.ok(responseDTO);
     }
-    
+
     @Operation(summary = "Update an organization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Organization updated successfully",
@@ -78,7 +78,7 @@ public class OrganizationRestController {
         OrganizationResponseDTO responseDTO = organizationService.updateOrganization(id, requestDTO);
         return ResponseEntity.ok(responseDTO);
     }
-    
+
     @Operation(summary = "Delete an organization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Organization deleted successfully"),
@@ -90,7 +90,7 @@ public class OrganizationRestController {
         organizationService.deleteOrganization(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @Operation(summary = "Search organizations by name")
     @ApiResponse(responseCode = "200", description = "Search results",
             content = @Content(schema = @Schema(implementation = OrganizationResponseDTO.class)))
@@ -100,7 +100,7 @@ public class OrganizationRestController {
         List<OrganizationResponseDTO> organizations = organizationService.searchOrganizationsByName(name);
         return ResponseEntity.ok(organizations);
     }
-    
+
     @Operation(summary = "Find organization by tax ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Organization found",

@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrganizationResponseDTO {
-    
+
     private Long id;
     private String name;
     private String description;
@@ -28,7 +28,7 @@ public class OrganizationResponseDTO {
     private LocalDateTime updatedAt;
     private String createdBy;
     private String updatedBy;
-    
+
     /**
      * Nested DTO for Branch responses within Organization.
      */

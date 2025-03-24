@@ -2,6 +2,7 @@ package app.quantun.eb2c.rest;
 
 
 import app.quantun.eb2c.model.contract.request.ProductRequestDTO;
+import app.quantun.eb2c.model.contract.request.ProductSearchCriteria;
 import app.quantun.eb2c.model.contract.response.ProductResponseDTO;
 import app.quantun.eb2c.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -124,7 +129,7 @@ public class ProductRestController {
     /**
      * Update details of an existing product.
      *
-     * @param id the ID of the product to be updated
+     * @param id                the ID of the product to be updated
      * @param productRequestDTO the updated product details
      * @return the updated ProductResponseDTO
      */
@@ -219,4 +224,44 @@ public class ProductRestController {
     public ResponseEntity<List<ProductResponseDTO>> getInStockProducts() {
         return ResponseEntity.ok(productService.getInStockProducts());
     }
+
+
+    /**
+     * Search for products based on multiple criteria with pagination.
+     *
+     * @param criteria the search criteria
+     * @param page     the page number (zero-based)
+     * @param size     the page size
+     * @param sort     the sorting criteria
+     * @return a page of products matching the criteria
+     */
+    @PostMapping("/search")
+    @Operation(summary = "Search products by criteria",
+            description = "Search for products based on multiple criteria with pagination and sorting",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Successfully retrieved filtered products",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Page.class)))
+            })
+    public ResponseEntity<Page<ProductResponseDTO>> searchProducts(
+            @RequestBody ProductSearchCriteria criteria,
+            @Parameter(description = "Page number (zero-based)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Sort field and direction, e.g. name,asc", example = "name,asc")
+            @RequestParam(defaultValue = "id,asc") String sort) {
+
+        String[] sortParams = sort.split(",");
+        String sortField = sortParams[0];
+        Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+        Page<ProductResponseDTO> products = productService.findProductsByCriteria(criteria, pageable);
+
+        return ResponseEntity.ok(products);
+    }
+
 }

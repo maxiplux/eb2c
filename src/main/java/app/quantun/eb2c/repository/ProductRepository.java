@@ -3,6 +3,7 @@ package app.quantun.eb2c.repository;
 
 import app.quantun.eb2c.model.entity.bussines.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ import java.util.List;
  * This interface provides methods for CRUD operations and custom queries on Product entities.
  */
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
     /**
      * Find products containing the given name.

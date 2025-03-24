@@ -2,15 +2,21 @@ package app.quantun.eb2c.service;
 
 
 import app.quantun.eb2c.model.contract.request.ProductRequestDTO;
+import app.quantun.eb2c.model.contract.request.ProductSearchCriteria;
 import app.quantun.eb2c.model.contract.response.ProductResponseDTO;
 import app.quantun.eb2c.model.entity.bussines.Product;
 import app.quantun.eb2c.repository.ProductRepository;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Update details of an existing product.
      *
-     * @param id the ID of the product to be updated
+     * @param id                the ID of the product to be updated
      * @param productRequestDTO the updated product details
      * @return the updated ProductResponseDTO
      */
@@ -88,7 +94,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Update the fields of an existing product with the provided details.
      *
-     * @param existingProduct the existing product to be updated
+     * @param existingProduct   the existing product to be updated
      * @param productRequestDTO the updated product details
      */
     @Override
@@ -155,4 +161,43 @@ public class ProductServiceImpl implements ProductService {
                 .map(product -> modelMapper.map(product, ProductResponseDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<ProductResponseDTO> findProductsByCriteria(ProductSearchCriteria criteria, Pageable pageable) {
+        Specification<Product> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (criteria.getNamePattern() != null) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")),
+                        "%" + criteria.getNamePattern().toLowerCase() + "%"));
+            }
+
+            if (criteria.getMinPrice() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("price"), criteria.getMinPrice()));
+            }
+
+            if (criteria.getMaxPrice() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), criteria.getMaxPrice()));
+            }
+
+            if (criteria.getInStock() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("inStock"), criteria.getInStock()));
+            }
+
+            if (criteria.getMinStock() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("stock"), criteria.getMinStock()));
+            }
+
+            if (criteria.getCategoryName() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("category").get("name"), criteria.getCategoryName()));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return productRepository.findAll(spec, pageable)
+                .map(product -> modelMapper.map(product, ProductResponseDTO.class));
+    }
+
+
 }

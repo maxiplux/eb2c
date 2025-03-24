@@ -79,8 +79,8 @@ class OrganizationRestControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/organizations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name", is("Test Organization")))
@@ -146,8 +146,8 @@ class OrganizationRestControllerTest {
 
         // Act & Assert
         mockMvc.perform(put("/api/organizations/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name", is("Test Organization")));
@@ -164,8 +164,8 @@ class OrganizationRestControllerTest {
 
         // Act & Assert
         mockMvc.perform(put("/api/organizations/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.type").exists())
                 .andExpect(jsonPath("$.title").value("Resource Not Found"))
@@ -252,7 +252,7 @@ class OrganizationRestControllerTest {
 
         verify(organizationService).getOrganizationByTaxId("123456789");
     }
-    
+
     @Test
     void createOrganization_WhenValidationFails_ShouldReturnProblemDetail() throws Exception {
         // Arrange: Create a request with invalid data (empty name)
@@ -263,8 +263,8 @@ class OrganizationRestControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/organizations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.type").exists())
                 .andExpect(jsonPath("$.title").value("Validation Error"))

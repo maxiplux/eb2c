@@ -29,24 +29,24 @@ import java.time.LocalDateTime;
 @ToString
 @RequiredArgsConstructor
 public abstract class AuditModel<T> implements Serializable {
+    @CreatedBy
+    @Column(name = "created_by")
+    protected T createdBy;
+    @LastModifiedBy
+    @Column(name = "modified_by")
+    protected T modifiedBy;
+
+    // Getters and Setters (Omitted for brevity)
     @Column(name = "created_at", nullable = true, updatable = true)
     @CreatedDate
     private LocalDateTime createdAt;
-
-
     @Column(name = "updated_at", nullable = true)
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    // Getters and Setters (Omitted for brevity)
-
-
-
-
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-        if (this.createdAt == null)
-        {
+        if (this.createdAt == null) {
             this.createdAt = LocalDateTime.now();
 
         }
@@ -55,21 +55,12 @@ public abstract class AuditModel<T> implements Serializable {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-        if (updatedAt == null)
-        {
+        if (updatedAt == null) {
             this.updatedAt = LocalDateTime.now();
 
         }
 
     }
-
-    @CreatedBy
-    @Column(name = "created_by")
-    protected T createdBy;
-
-    @LastModifiedBy
-    @Column(name = "modified_by")
-    protected T modifiedBy;
 
 
 }

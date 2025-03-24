@@ -91,7 +91,7 @@ class OrganizationServiceImplTest {
         resp2.setName("Second Organization");
 
         List<Organization> organizations = Arrays.asList(organization, org2);
-        
+
         when(organizationRepository.findAll()).thenReturn(organizations);
         when(modelMapper.map(eq(organization), eq(OrganizationResponseDTO.class))).thenReturn(responseDTO);
         when(modelMapper.map(eq(org2), eq(OrganizationResponseDTO.class))).thenReturn(resp2);

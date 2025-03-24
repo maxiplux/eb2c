@@ -21,10 +21,10 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product  extends AuditModel<String> {
+public class Product extends AuditModel<String> {
 
     /**
      * The unique identifier for the product.

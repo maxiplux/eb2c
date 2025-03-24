@@ -36,7 +36,7 @@ public class Branch extends AuditModel<String> {
     @Column(nullable = true)
     private String email;
 
-    @NotNull
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id", nullable = false)
     @JsonIgnoreProperties(value = {"branches", "hibernateLazyInitializer", "handler"}, allowSetters = true)

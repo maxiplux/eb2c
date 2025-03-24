@@ -1,7 +1,7 @@
 package app.quantun.eb2c.controller;
 
 
-import app.quantun.eb2c.config.JwtTokenProvider;
+import app.quantun.eb2c.config.security.JwtTokenProvider;
 import app.quantun.eb2c.model.contract.LoginRequest;
 import app.quantun.eb2c.repository.UserRepository;
 import jakarta.validation.Valid;

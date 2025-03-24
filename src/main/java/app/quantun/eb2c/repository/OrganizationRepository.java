@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
-    
+
     /**
      * Find an organization by its name.
      *
@@ -20,7 +20,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
      * @return an Optional containing the found organization or empty if not found
      */
     Optional<Organization> findByName(String name);
-    
+
     /**
      * Find organizations containing the given name (case insensitive).
      *
@@ -28,7 +28,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
      * @return a list of organizations matching the search criteria
      */
     List<Organization> findByNameContainingIgnoreCase(String name);
-    
+
     /**
      * Find an organization by its tax ID.
      *

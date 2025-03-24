@@ -1,4 +1,4 @@
-package app.quantun.eb2c.config;
+package app.quantun.eb2c.config.security;
 
 import app.quantun.eb2c.model.contract.UserInfoDTO;
 import app.quantun.eb2c.repository.UserRepository;

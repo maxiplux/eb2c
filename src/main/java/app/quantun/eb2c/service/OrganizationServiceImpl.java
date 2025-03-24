@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrganizationServiceImpl implements OrganizationService {
-    
+
     private final OrganizationRepository organizationRepository;
     private final ModelMapper modelMapper;
-    
+
     @Override
     @Transactional
     public OrganizationResponseDTO createOrganization(OrganizationRequestDTO requestDTO) {
@@ -30,7 +30,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization savedOrganization = organizationRepository.save(organization);
         return modelMapper.map(savedOrganization, OrganizationResponseDTO.class);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<OrganizationResponseDTO> getAllOrganizations() {
@@ -38,7 +38,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 .map(organization -> modelMapper.map(organization, OrganizationResponseDTO.class))
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public OrganizationResponseDTO getOrganizationById(Long id) {
@@ -46,21 +46,21 @@ public class OrganizationServiceImpl implements OrganizationService {
                 .orElseThrow(() -> new EntityNotFoundException("Organization not found with id: " + id));
         return modelMapper.map(organization, OrganizationResponseDTO.class);
     }
-    
+
     @Override
     @Transactional
     public OrganizationResponseDTO updateOrganization(Long id, OrganizationRequestDTO requestDTO) {
         Organization organization = organizationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Organization not found with id: " + id));
-        
+
         organization.setName(requestDTO.getName());
         organization.setDescription(requestDTO.getDescription());
         organization.setTaxId(requestDTO.getTaxId());
-        
+
         Organization updatedOrganization = organizationRepository.save(organization);
         return modelMapper.map(updatedOrganization, OrganizationResponseDTO.class);
     }
-    
+
     @Override
     @Transactional
     public void deleteOrganization(Long id) {
@@ -69,7 +69,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
         organizationRepository.deleteById(id);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<OrganizationResponseDTO> searchOrganizationsByName(String name) {
@@ -77,7 +77,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 .map(organization -> modelMapper.map(organization, OrganizationResponseDTO.class))
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public OrganizationResponseDTO getOrganizationByTaxId(String taxId) {

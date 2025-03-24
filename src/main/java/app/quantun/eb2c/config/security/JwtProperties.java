@@ -1,4 +1,4 @@
-package app.quantun.eb2c.config;
+package app.quantun.eb2c.config.security;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
