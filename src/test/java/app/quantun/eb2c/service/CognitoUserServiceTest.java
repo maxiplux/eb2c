@@ -35,6 +35,8 @@ public class CognitoUserServiceTest {
     @InjectMocks
     private CognitoUserService userService;
     private UserRequest userRequest;
+
+
     private UserType userType;
 
     @BeforeEach
