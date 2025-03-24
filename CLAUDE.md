@@ -1,6 +1,7 @@
 # B2B Commerce Project Guide
 
 ## Build/Test Commands
+
 - Build project: `./gradlew build`
 - Run tests: `./gradlew test`
 - Single test: `./gradlew test --tests "app.quantun.b2b.TestClassName.testMethodName"`
@@ -9,6 +10,7 @@
 - Docker build: `docker build -t b2bcommerce .` or `docker-compose up -d`
 
 ## Code Style Guidelines
+
 - Java 17, Spring Boot 3.4.x
 - Max line length: 120 characters
 - Indentation: 4 spaces, no tabs

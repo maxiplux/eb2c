@@ -14,8 +14,8 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 public class RedisConfig {
 
     @Bean
-    public  RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
-                                                                 MessageListenerAdapter listenerAdapter) {
+    public RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
+                                                        MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(listenerAdapter, topic());
@@ -23,17 +23,17 @@ public class RedisConfig {
     }
 
     @Bean
-    public   MessageListenerAdapter listenerAdapter( RedisSubscriber subscriber) {
+    public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
         return new MessageListenerAdapter(subscriber, "onMessage");
     }
 
     @Bean
-    public  ChannelTopic topic() {
+    public ChannelTopic topic() {
         return new ChannelTopic("messageQueue");
     }
 
     @Bean
-    public  RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         return template;

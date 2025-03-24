@@ -10,7 +10,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.liquibase:liquibase-core'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -47,10 +48,6 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'com.h2database:h2'
 
-    // JWT dependencies
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
     // ModelMapper dependency
     implementation 'org.modelmapper:modelmapper:3.1.1'
@@ -71,6 +68,9 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'net.bytebuddy:byte-buddy'
     testImplementation 'org.springframework:spring-test'
+
+    // https://mvnrepository.com/artifact/software.amazon.awssdk/cognitoidentityprovider
+    implementation("software.amazon.awssdk:cognitoidentityprovider:2.31.6")
 }
 
 tasks.named('test') {

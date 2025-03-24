@@ -19,7 +19,6 @@
     </module>
 
 
-
     <module name="TreeWalker">
         <!-- Checks for Javadoc comments -->
         <module name="JavadocMethod"/>
@@ -51,7 +50,6 @@
             <property name="max" value="50"/>
         </module>
         <module name="ParameterNumber"/>
-
 
 
         <!-- Checks for whitespace -->

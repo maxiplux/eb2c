@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @Configuration
 @EnableJpaAuditing
+
+
 public class Eb2cApplication {
 
     public static void main(String[] args) {

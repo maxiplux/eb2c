@@ -2,7 +2,6 @@ package app.quantun.eb2c.model.entity.bussines;
 
 
 import app.quantun.eb2c.model.entity.AuditModel;
-import app.quantun.eb2c.util.StringToLongConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
