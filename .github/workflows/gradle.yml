@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      checks: write # Added permission for check creation
+
 
     steps:
       - uses: actions/checkout@v4
@@ -37,35 +39,27 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Test
-        run: ./gradlew test
+        run: ./gradlew :test --tests "app.quantun.eb2c.AllTestsRunner"
 
-      - name: Upload test results
+      # Use the built-in test report XML format
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # Always run even if the previous step fails
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          fail_on_failure: false
+          require_tests: false
+          check_name: Gradle Test Results
+
+      - name: Upload test reports
+        if: success() || failure() # Always run even if the previous step fails
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: build/reports/tests/
+          name: test-reports
+          path: |
+            **/build/reports/tests/
+            **/build/test-results/ 
 
-      - name: Publish test results
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const core = require('@actions/core')
-            const { context, github } = require('@actions/github')
-            const testResults = fs.readFileSync('build/reports/tests/test/index.html', 'utf8')
-            const summary = 'Test Summary: ' + testResults
-            const check_run = github.actions.createCheckRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head_sha: context.sha,
-              name: 'Gradle Test',
-              status: 'completed',
-              conclusion: 'success',
-              output: {
-                title: 'Test Results',
-                summary: summary
-              }
-            })
-            await check_run
       - name: Build with Gradle Wrapper
         run: ./gradlew build -x test
 
