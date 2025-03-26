@@ -68,4 +68,7 @@ public interface OrganizationService {
      * @throws jakarta.persistence.EntityNotFoundException if organization not found
      */
     OrganizationResponseDTO getOrganizationByTaxId(String taxId);
+
+    void deleteAllOrganizations();
+
 }

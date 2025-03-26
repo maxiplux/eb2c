@@ -1,240 +1,261 @@
 package app.quantun.eb2c.service;
 
+import app.quantun.eb2c.cucumber.steps.OrganizationServiceSteps;
 import app.quantun.eb2c.model.contract.request.OrganizationRequestDTO;
 import app.quantun.eb2c.model.contract.response.OrganizationResponseDTO;
-import app.quantun.eb2c.model.entity.bussines.Organization;
-import app.quantun.eb2c.repository.OrganizationRepository;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
-import org.springframework.test.context.aot.DisabledInAotMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
 class OrganizationServiceImplTest {
 
-    @Mock
-    private OrganizationRepository organizationRepository;
+    private static final Logger log = LoggerFactory.getLogger(OrganizationServiceSteps.class);
 
-    @Mock
-    private ModelMapper modelMapper;
+    @Autowired
+    private Validator validator;
 
-    @InjectMocks
-    private OrganizationServiceImpl organizationService;
+    @Autowired
+    private OrganizationService organizationService;
 
-    private Organization organization;
     private OrganizationRequestDTO requestDTO;
     private OrganizationResponseDTO responseDTO;
+    private List<OrganizationResponseDTO> responseDTOList;
+    private Exception caughtException;
 
-    @BeforeEach
-    void setUp() {
-        // Prepare test data
-        organization = new Organization();
-        organization.setId(1L);
-        organization.setName("Test Organization");
-        organization.setDescription("Test Description");
-        organization.setTaxId("123456789");
-
-        requestDTO = new OrganizationRequestDTO();
-        requestDTO.setName("Test Organization");
-        requestDTO.setDescription("Test Description");
-        requestDTO.setTaxId("123456789");
-
-        responseDTO = new OrganizationResponseDTO();
-        responseDTO.setId(1L);
-        responseDTO.setName("Test Organization");
-        responseDTO.setDescription("Test Description");
-        responseDTO.setTaxId("123456789");
+    @Before
+    public void setup() {
+        organizationService.deleteAllOrganizations();
+        caughtException = null;
     }
 
-    @Test
-    void createOrganization_ShouldReturnCreatedOrganization() {
-        // Arrange
-        when(modelMapper.map(any(OrganizationRequestDTO.class), eq(Organization.class))).thenReturn(organization);
-        when(organizationRepository.save(any(Organization.class))).thenReturn(organization);
-        when(modelMapper.map(any(Organization.class), eq(OrganizationResponseDTO.class))).thenReturn(responseDTO);
-
-        // Act
-        OrganizationResponseDTO result = organizationService.createOrganization(requestDTO);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Test Organization", result.getName());
-        assertEquals("Test Description", result.getDescription());
-        assertEquals("123456789", result.getTaxId());
-        verify(organizationRepository).save(any(Organization.class));
+    @Given("I have a valid organization request with name {string}, description {string} and tax ID {string}")
+    public void iHaveAValidOrganizationRequest(String name, String description, String taxId) {
+        requestDTO = OrganizationRequestDTO.builder()
+                .name(name)
+                .description(description)
+                .taxId(taxId)
+                .build();
     }
 
-    @Test
-    void getAllOrganizations_ShouldReturnAllOrganizations() {
-        // Arrange
-        Organization org2 = new Organization();
-        org2.setId(2L);
-        org2.setName("Second Organization");
-
-        OrganizationResponseDTO resp2 = new OrganizationResponseDTO();
-        resp2.setId(2L);
-        resp2.setName("Second Organization");
-
-        List<Organization> organizations = Arrays.asList(organization, org2);
-
-        when(organizationRepository.findAll()).thenReturn(organizations);
-        when(modelMapper.map(eq(organization), eq(OrganizationResponseDTO.class))).thenReturn(responseDTO);
-        when(modelMapper.map(eq(org2), eq(OrganizationResponseDTO.class))).thenReturn(resp2);
-
-        // Act
-        List<OrganizationResponseDTO> result = organizationService.getAllOrganizations();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-        verify(organizationRepository).findAll();
+    @When("I create a new organization")
+    public void iCreateANewOrganization() {
+        try {
+            responseDTO = organizationService.createOrganization(requestDTO);
+            if (responseDTO == null) {
+                System.err.println("Service returned null response");
+            }
+        } catch (Exception e) {
+            caughtException = e;
+            log.error("Exception during organization creation: {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    @Test
-    void getOrganizationById_WhenExists_ShouldReturnOrganization() {
-        // Arrange
-        when(organizationRepository.findById(anyLong())).thenReturn(Optional.of(organization));
-        when(modelMapper.map(any(Organization.class), eq(OrganizationResponseDTO.class))).thenReturn(responseDTO);
-
-        // Act
-        OrganizationResponseDTO result = organizationService.getOrganizationById(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Test Organization", result.getName());
-        verify(organizationRepository).findById(1L);
+    @Then("the organization is successfully created")
+    public void theOrganizationIsSuccessfullyCreated() {
+        assertNotNull(responseDTO);
+        assertNotNull(responseDTO.getId());
     }
 
-    @Test
-    void getOrganizationById_WhenNotExists_ShouldThrowEntityNotFoundException() {
-        // Arrange
-        when(organizationRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> {
-            organizationService.getOrganizationById(1L);
-        });
-        verify(organizationRepository).findById(1L);
+    @Then("the created organization has the name {string}, description {string} and tax ID {string}")
+    public void theCreatedOrganizationHasTheCorrectData(String name, String description, String taxId) {
+        assertEquals(name, responseDTO.getName());
+        assertEquals(description, responseDTO.getDescription());
+        assertEquals(taxId, responseDTO.getTaxId());
     }
 
-    @Test
-    void updateOrganization_WhenExists_ShouldReturnUpdatedOrganization() {
-        // Arrange
-        when(organizationRepository.findById(anyLong())).thenReturn(Optional.of(organization));
-        when(organizationRepository.save(any(Organization.class))).thenReturn(organization);
-        when(modelMapper.map(any(Organization.class), eq(OrganizationResponseDTO.class))).thenReturn(responseDTO);
-
-        // Act
-        OrganizationResponseDTO result = organizationService.updateOrganization(1L, requestDTO);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Test Organization", result.getName());
-        verify(organizationRepository).findById(1L);
-        verify(organizationRepository).save(any(Organization.class));
+    @Given("the following organizations exist:")
+    public void theFollowingOrganizationsExist(DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+        for (Map<String, String> row : rows) {
+            OrganizationRequestDTO dto = OrganizationRequestDTO.builder()
+                    .name(row.get("name"))
+                    .description(row.get("description"))
+                    .taxId(row.get("taxId"))
+                    .build();
+            validateOrganizationRequestDTO(dto);
+            organizationService.createOrganization(dto);
+        }
     }
 
-    @Test
-    void updateOrganization_WhenNotExists_ShouldThrowEntityNotFoundException() {
-        // Arrange
-        when(organizationRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> {
-            organizationService.updateOrganization(1L, requestDTO);
-        });
-        verify(organizationRepository).findById(1L);
-        verify(organizationRepository, never()).save(any(Organization.class));
+    private void validateOrganizationRequestDTO(OrganizationRequestDTO dto) {
+        Set<ConstraintViolation<OrganizationRequestDTO>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (ConstraintViolation<OrganizationRequestDTO> violation : violations) {
+                sb.append(violation.getMessage()).append("; ");
+            }
+            throw new ConstraintViolationException("Invalid OrganizationRequestDTO: " + sb.toString(), violations);
+        }
     }
 
-    @Test
-    void deleteOrganization_WhenExists_ShouldDeleteOrganization() {
-        // Arrange
-        when(organizationRepository.existsById(anyLong())).thenReturn(true);
-        doNothing().when(organizationRepository).deleteById(anyLong());
-
-        // Act
-        organizationService.deleteOrganization(1L);
-
-        // Assert
-        verify(organizationRepository).existsById(1L);
-        verify(organizationRepository).deleteById(1L);
+    @When("I request all organizations")
+    public void iRequestAllOrganizations() {
+        try {
+            responseDTOList = organizationService.getAllOrganizations();
+        } catch (Exception e) {
+            caughtException = e;
+        }
     }
 
-    @Test
-    void deleteOrganization_WhenNotExists_ShouldThrowEntityNotFoundException() {
-        // Arrange
-        when(organizationRepository.existsById(anyLong())).thenReturn(false);
-
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> {
-            organizationService.deleteOrganization(1L);
-        });
-        verify(organizationRepository).existsById(1L);
-        verify(organizationRepository, never()).deleteById(anyLong());
+    @Then("I should receive a list of {int} organizations")
+    public void iShouldReceiveAListOfOrganizations(int count) {
+        assertEquals(count, responseDTOList.size());
     }
 
-    @Test
-    void searchOrganizationsByName_ShouldReturnMatchingOrganizations() {
-        // Arrange
-        List<Organization> organizations = Arrays.asList(organization);
-        when(organizationRepository.findByNameContainingIgnoreCase(anyString())).thenReturn(organizations);
-        when(modelMapper.map(any(Organization.class), eq(OrganizationResponseDTO.class))).thenReturn(responseDTO);
-
-        // Act
-        List<OrganizationResponseDTO> result = organizationService.searchOrganizationsByName("Test");
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Test Organization", result.get(0).getName());
-        verify(organizationRepository).findByNameContainingIgnoreCase("Test");
+    @When("I request the organization with ID {string}")
+    public void iRequestTheOrganizationWithId(String id) {
+        try {
+            Long orgId = Long.parseLong(id);
+            responseDTO = organizationService.getOrganizationById(orgId);
+        } catch (Exception e) {
+            caughtException = e;
+        }
     }
 
-    @Test
-    void getOrganizationByTaxId_WhenExists_ShouldReturnOrganization() {
-        // Arrange
-        when(organizationRepository.findByTaxId(anyString())).thenReturn(Optional.of(organization));
-        when(modelMapper.map(any(Organization.class), eq(OrganizationResponseDTO.class))).thenReturn(responseDTO);
-
-        // Act
-        OrganizationResponseDTO result = organizationService.getOrganizationByTaxId("123456789");
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("123456789", result.getTaxId());
-        verify(organizationRepository).findByTaxId("123456789");
+    @Then("I should receive the organization details")
+    public void iShouldReceiveTheOrganizationDetails() {
+        assertNotNull(responseDTO);
+        assertNotNull(responseDTO.getId());
     }
 
-    @Test
-    void getOrganizationByTaxId_WhenNotExists_ShouldThrowEntityNotFoundException() {
-        // Arrange
-        when(organizationRepository.findByTaxId(anyString())).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> {
-            organizationService.getOrganizationByTaxId("123456789");
-        });
-        verify(organizationRepository).findByTaxId("123456789");
+    @Then("I should receive an entity not found error with message {string}")
+    public void iShouldReceiveAnEntityNotFoundErrorWithMessage(String message) {
+        assertNotNull(caughtException);
+        assertTrue(caughtException instanceof EntityNotFoundException);
+        assertEquals(message, caughtException.getMessage());
     }
+
+    @When("I update the organization with ID {string} with name {string}, description {string} and tax ID {string}")
+    public void iUpdateTheOrganizationWithIdWithNameDescriptionAndTaxId(String id, String name, String description, String taxId) {
+        try {
+            Long orgId = Long.parseLong(id);
+            requestDTO = OrganizationRequestDTO.builder()
+                    .name(name)
+                    .description(description)
+                    .taxId(taxId)
+                    .build();
+            responseDTO = organizationService.updateOrganization(orgId, requestDTO);
+        } catch (Exception e) {
+            caughtException = e;
+        }
+    }
+
+    @Then("the organization is successfully updated")
+    public void theOrganizationIsSuccessfullyUpdated() {
+        assertNotNull(responseDTO);
+    }
+
+    @Then("the updated organization has the name {string}, description {string} and tax ID {string}")
+    public void theUpdatedOrganizationHasTheCorrectData(String name, String description, String taxId) {
+        assertEquals(name, responseDTO.getName());
+        assertEquals(description, responseDTO.getDescription());
+        assertEquals(taxId, responseDTO.getTaxId());
+    }
+
+    @When("I delete the organization with ID {string}")
+    public void iDeleteTheOrganizationWithId(String id) {
+        try {
+            Long orgId = Long.parseLong(id);
+            organizationService.deleteOrganization(orgId);
+        } catch (Exception e) {
+            caughtException = e;
+        }
+    }
+
+    @Then("the organization is successfully deleted")
+    public void theOrganizationIsSuccessfullyDeleted() {
+        assertNull(caughtException);
+        Long orgId = 1L;
+        try {
+            organizationService.getOrganizationById(orgId);
+            fail("Organization should have been deleted");
+        } catch (EntityNotFoundException e) {
+            // Expected behavior - organization should not exist
+        }
+    }
+
+    @When("I search for organizations with name {string}")
+    public void iSearchForOrganizationsWithName(String name) {
+        try {
+            responseDTOList = organizationService.searchOrganizationsByName(name);
+        } catch (Exception e) {
+            caughtException = e;
+        }
+    }
+
+    @Then("the list should contain organizations with names {string} and {string}")
+    public void theListShouldContainOrganizationsWithNames(String name1, String name2) {
+        List<String> orgNames = responseDTOList.stream()
+                .map(OrganizationResponseDTO::getName)
+                .collect(Collectors.toList());
+        assertTrue(orgNames.contains(name1));
+        assertTrue(orgNames.contains(name2));
+    }
+
+    @Given("an organization with tax ID {string} exists")
+    public void anOrganizationWithTaxIdExists(String taxId) {
+        try {
+            organizationService.getOrganizationByTaxId(taxId);
+        } catch (EntityNotFoundException e) {
+            OrganizationRequestDTO dto = OrganizationRequestDTO.builder()
+                    .name("Test Organization")
+                    .description("Test Description")
+                    .taxId(taxId)
+                    .build();
+            organizationService.createOrganization(dto);
+        }
+    }
+
+    @When("I request the organization with tax ID {string}")
+    public void iRequestTheOrganizationWithTaxId(String taxId) {
+        try {
+            responseDTO = organizationService.getOrganizationByTaxId(taxId);
+        } catch (Exception e) {
+            caughtException = e;
+        }
+    }
+
+    @Then("I should receive the organization details with tax ID {string}")
+    public void iShouldReceiveTheOrganizationDetailsWithTaxId(String taxId) {
+        assertNotNull(responseDTO);
+        assertEquals(taxId, responseDTO.getTaxId());
+    }
+
+    // Additional step definition to complete the undefined step
+    @Given("an organization with ID {string} exists")
+    public void anOrganizationWithIdExists(String id) {
+        Long expectedId = Long.parseLong(id);
+        // Create organization with dummy data using the provided id in the name and tax ID.
+        OrganizationRequestDTO dto = OrganizationRequestDTO.builder()
+                .name("Test Organization " + id)
+                .description("Description for organization " + id)
+                .taxId("TAX" + id)
+                .build();
+        responseDTO = organizationService.createOrganization(dto);
+        // Optionally, check if the generated id equals the expected id.
+        // This assumes a deterministic setup; if not, you might store the response and map the expected id.
+        assertEquals(expectedId, responseDTO.getId(), "The created organization's id should match the expected id");
+    }
+
 }

@@ -24,6 +24,10 @@ public class Organization extends AuditModel<String> {
     @Column(nullable = false)
     private Long id;
 
+    @Version
+    private Long version;
+
+
     @NotBlank
     @Column(nullable = false)
     private String name;

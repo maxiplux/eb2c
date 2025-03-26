@@ -16,13 +16,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -41,7 +41,15 @@ import java.util.Properties;
 @EnableJpaAuditing(auditorAwareRef = "testAuditorProvider")
 @EnableJpaRepositories(basePackages = "app.quantun.eb2c.repository")
 @EnableTransactionManagement
+
 public class TestConfig {
+    @Bean
+    public static DefaultTransactionDefinition transactionDefinition() {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        return def;
+    }
+
     @Bean
     @Primary
     public AuditorAware<String> testAuditorProvider() {
@@ -53,10 +61,6 @@ public class TestConfig {
             }
         };
     }
-
-
-
-
 
     @Bean
     @Primary
@@ -83,7 +87,6 @@ public class TestConfig {
         txManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return txManager;
     }
-
 
     @Bean
     @Primary
@@ -116,7 +119,6 @@ public class TestConfig {
 
         return new LettuceConnectionFactory(redisConfig);
     }
-
 
 
 }
