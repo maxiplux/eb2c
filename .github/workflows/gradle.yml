@@ -39,6 +39,33 @@ jobs:
       - name: Test
         run: ./gradlew test
 
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/reports/tests/
+
+      - name: Publish test results
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const core = require('@actions/core')
+            const { context, github } = require('@actions/github')
+            const testResults = fs.readFileSync('build/reports/tests/test/index.html', 'utf8')
+            const summary = 'Test Summary: ' + testResults
+            const check_run = github.actions.createCheckRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: context.sha,
+              name: 'Gradle Test',
+              status: 'completed',
+              conclusion: 'success',
+              output: {
+                title: 'Test Results',
+                summary: summary
+              }
+            })
+            await check_run
       - name: Build with Gradle Wrapper
         run: ./gradlew build -x test
 
