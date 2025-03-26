@@ -99,16 +99,22 @@ dependencies {
 task cucumber() {
     dependsOn assemble, testClasses
     doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
-            args = ['--plugin', 'pretty',
-                    '--plugin', 'html:build/reports/cucumber/report.html',
-                    '--glue', 'app.quantun.eb2c.service',
-                    'src/test/resources/features']
-        }
+        javaexec(new Action<JavaExecSpec>() {
+            @Override
+            void execute(JavaExecSpec javaExecSpec) {
+                javaExecSpec.mainClass.set("io.cucumber.core.cli.Main")
+                javaExecSpec.classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
+                javaExecSpec.args = ['--plugin', 'pretty',
+                                     '--plugin', 'html:build/reports/cucumber/report.html',
+                                     '--glue', 'app.quantun.eb2c.cucumber.steps',
+                                     '--glue', 'app.quantun.eb2c.config',
+                                     'src/test/resources/features']
+            }
+        })
     }
 }
+
+
 
 tasks.named('test') {
     useJUnitPlatform()
