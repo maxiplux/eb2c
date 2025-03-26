@@ -1,54 +1,67 @@
 package app.quantun.eb2c.config.security;
 
-
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
+@Slf4j
+@EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private CustomAuthenticationSuccessHandler successHandler;
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    private CustomLogoutSuccessHandler logoutSuccessHandler;
+
+    @Autowired
+    private CustomOidcUserService customOidcUserService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
+        http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(authorize -> authorize
+                        // Permit static resources and SAML endpoints
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/public/**",
+                                "/media/**", "/custom-login", "/login", "/custom-logout",
+                                "/login/oauth2/**",
+                                "v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                                "/app/login/**", "/app/logout/**",
+                                "/", "/error/**",
+                                "api/**", "/actuator/**",
+                                "/saml2/**").permitAll()
+                        .requestMatchers("/dashboard").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .oauth2Login(saml2 -> saml2
+                        // .loginPage("/custom-login")
+                        .defaultSuccessUrl("/dashboard")
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
+                        .successHandler(successHandler)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout/saml2/slo")
+                        .logoutSuccessHandler(logoutSuccessHandler)
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .logoutSuccessUrl("/custom-login")
+                        .deleteCookies("JSESSIONID")
+                );
 
-                        .requestMatchers("/api/users/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // Explicitly permit all Swagger/OpenAPI endpoints
-                        .requestMatchers("/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+
+        return http.build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

@@ -1,13 +1,15 @@
 package app.quantun.eb2c.service;
 
+import app.quantun.eb2c.mapper.OrganizationMapper;
 import app.quantun.eb2c.model.contract.request.OrganizationRequestDTO;
 import app.quantun.eb2c.model.contract.response.OrganizationResponseDTO;
 import app.quantun.eb2c.model.entity.bussines.Organization;
 import app.quantun.eb2c.repository.OrganizationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,30 +23,32 @@ import java.util.stream.Collectors;
 public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepository organizationRepository;
-    private final ModelMapper modelMapper;
+    //private final ModelMapper modelMapper;
+
+    private final OrganizationMapper organizationMapper;
 
     @Override
     @Transactional
     public OrganizationResponseDTO createOrganization(OrganizationRequestDTO requestDTO) {
-        Organization organization = modelMapper.map(requestDTO, Organization.class);
+        Organization organization = organizationMapper.toEntity(requestDTO);
         Organization savedOrganization = organizationRepository.save(organization);
-        return modelMapper.map(savedOrganization, OrganizationResponseDTO.class);
+        return organizationMapper.toOrganizationResponseDTO(savedOrganization);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<OrganizationResponseDTO> getAllOrganizations() {
         return organizationRepository.findAll().stream()
-                .map(organization -> modelMapper.map(organization, OrganizationResponseDTO.class))
+                .map(organizationMapper::toOrganizationResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, readOnly = true)
     public OrganizationResponseDTO getOrganizationById(Long id) {
         Organization organization = organizationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Organization not found with id: " + id));
-        return modelMapper.map(organization, OrganizationResponseDTO.class);
+        return organizationMapper.toOrganizationResponseDTO(organization);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         organization.setTaxId(requestDTO.getTaxId());
 
         Organization updatedOrganization = organizationRepository.save(organization);
-        return modelMapper.map(updatedOrganization, OrganizationResponseDTO.class);
+        return organizationMapper.toOrganizationResponseDTO(updatedOrganization);
     }
 
     @Override
@@ -71,18 +75,24 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<OrganizationResponseDTO> searchOrganizationsByName(String name) {
         return organizationRepository.findByNameContainingIgnoreCase(name).stream()
-                .map(organization -> modelMapper.map(organization, OrganizationResponseDTO.class))
+                .map(organizationMapper::toOrganizationResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, readOnly = true)
     public OrganizationResponseDTO getOrganizationByTaxId(String taxId) {
         Organization organization = organizationRepository.findByTaxId(taxId)
                 .orElseThrow(() -> new EntityNotFoundException("Organization not found with tax ID: " + taxId));
-        return modelMapper.map(organization, OrganizationResponseDTO.class);
+        return organizationMapper.toOrganizationResponseDTO(organization);
     }
+
+    @Override
+    public void deleteAllOrganizations() {
+        organizationRepository.deleteAll();
+    }
+
 }

@@ -1,86 +1,57 @@
 package app.quantun.eb2c.exception;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Global exception handler for the application.
- * Uses RFC 7807 Problem Details for HTTP APIs.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ProblemDetail handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problemDetail.setTitle("Resource Not Found");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/not-found"));
-        problemDetail.setProperty("timestamp", Instant.now());
-        return problemDetail;
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        // Explicitly set title and detail
         problemDetail.setTitle("Validation Error");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/validation"));
-
-        Map<String, String> validationErrors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            validationErrors.put(fieldName, errorMessage);
-        });
-
-        problemDetail.setProperty("errors", validationErrors);
+        problemDetail.setDetail("Validation failed");
         problemDetail.setProperty("timestamp", Instant.now());
+
+        // Optional: Add field-specific validation errors
+        Map<String, String> fieldErrors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                fieldErrors.put(error.getField(), error.getDefaultMessage()));
+
+        problemDetail.setProperty("errors", fieldErrors);
+
         return problemDetail;
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ProblemDetail handleConstraintViolationException(ConstraintViolationException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setTitle("Constraint Violation");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/constraint-violation"));
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ProblemDetail handleEntityNotFoundException(EntityNotFoundException exception, ServletWebRequest webRequest) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND, exception.getMessage());
 
-        Map<String, String> constraintViolations = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation -> {
-            String propertyPath = violation.getPropertyPath().toString();
-            String message = violation.getMessage();
-            constraintViolations.put(propertyPath, message);
-        });
+        problemDetail.setTitle("Resource Not Found");
+        problemDetail.setProperty("timestamp", System.currentTimeMillis());
 
-        problemDetail.setProperty("violations", constraintViolations);
-        problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
 
     @ExceptionHandler(Exception.class)
-    public ProblemDetail handleGlobalException(Exception ex, WebRequest request) {
+    public ProblemDetail handleGlobalException(Exception exception, ServletWebRequest webRequest) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred"
-        );
-        problemDetail.setTitle("Internal Server Error");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/internal-error"));
-        problemDetail.setProperty("timestamp", Instant.now());
-        problemDetail.setProperty("exception", ex.getClass().getSimpleName());
+                HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
 
-        // In production, you might want to hide the actual exception message for security reasons
-        // and just log it instead
-        problemDetail.setProperty("message", ex.getMessage());
+        problemDetail.setTitle("Internal Server Error");
+        problemDetail.setProperty("timestamp", System.currentTimeMillis());
 
         return problemDetail;
     }
