@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -83,7 +86,14 @@ public class TestConfig {
         txManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return txManager;
     }
-
+    @Bean
+    @Primary
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName("localhost");
+        redisConfig.setPort(6379);
+        return new LettuceConnectionFactory(redisConfig);
+    }
 
 
 
