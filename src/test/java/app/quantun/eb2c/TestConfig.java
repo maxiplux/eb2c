@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAu
 import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.sql.DataSource;
 import java.util.Optional;
@@ -53,13 +56,7 @@ public class TestConfig {
 
 
 
-    @Bean
-    @Primary
-    public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .build();
-    }
+
 
     @Bean
     @Primary
@@ -86,12 +83,37 @@ public class TestConfig {
         txManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return txManager;
     }
+
+
+    @Bean
+    @Primary
+    public DataSource dataSource() {
+        PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
+                .withDatabaseName("testdb")
+                .withUsername("test")
+                .withPassword("test");
+        postgres.start();
+
+        return DataSourceBuilder.create()
+                .url(postgres.getJdbcUrl())
+                .username(postgres.getUsername())
+                .password(postgres.getPassword())
+                .build();
+    }
+
     @Bean
     @Primary
     public RedisConnectionFactory redisConnectionFactory() {
+        // Create Redis container
+        GenericContainer<?> redis = new GenericContainer<>("redis:7-alpine")
+                .withExposedPorts(6379);
+        redis.start();
+
+        // Configure connection to use the container
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-        redisConfig.setHostName("localhost");
-        redisConfig.setPort(6379);
+        redisConfig.setHostName(redis.getHost());
+        redisConfig.setPort(redis.getMappedPort(6379));
+
         return new LettuceConnectionFactory(redisConfig);
     }
 

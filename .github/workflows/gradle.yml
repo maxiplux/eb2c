@@ -22,18 +22,7 @@ jobs:
       checks: write # Added permission for check creation
 
 
-    # Add Redis service
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        # Set health checks to wait until redis has started
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+
 
     steps:
       - uses: actions/checkout@v4
