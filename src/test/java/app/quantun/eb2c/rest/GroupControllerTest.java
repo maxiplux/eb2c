@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = Eb2cApplication.class)
 @AutoConfigureMockMvc
 @Import(TestConfig.class)
+
 public class GroupControllerTest {
 
     @Autowired

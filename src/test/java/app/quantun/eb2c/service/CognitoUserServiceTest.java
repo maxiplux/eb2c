@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings("unchecked")
 public class CognitoUserServiceTest {
 
     private final String USER_POOL_ID = "test-user-pool-id";

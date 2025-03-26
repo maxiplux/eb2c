@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisabledInAotMode
+@SuppressWarnings("unchecked")
 class OrganizationServiceImplTest {
 
     @Mock
