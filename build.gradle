@@ -25,79 +25,88 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot Actuator for monitoring and management
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Spring Data JDBC for JDBC-based data access
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    // Spring Data JPA for JPA-based data access
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Spring JDBC for core JDBC support
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // Spring Boot Starter Validation for validation support
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Spring Boot Starter Web for building web applications
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    // Spring Boot Starter Security for security features
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Spring Boot Starter OAuth2 Client for OAuth2 client support
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // Liquibase for database schema management
     implementation 'org.liquibase:liquibase-core'
+    // Spring Boot DevTools for development-time features
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // Spring Boot Starter Test for testing support
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Spring Security Test for security testing support
     testImplementation 'org.springframework.security:spring-security-test'
 
+    // Spring Data Redis for Redis support
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // Lombok dependencies
+    // Lombok for reducing boilerplate code
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Database dependencies
+    // PostgreSQL JDBC driver for PostgreSQL database
     runtimeOnly 'org.postgresql:postgresql'
 
-
-    // ModelMapper dependency
+    // ModelMapper for object mapping
     implementation 'org.modelmapper:modelmapper:3.1.1'
 
-    // SpringDoc OpenAPI dependency
+    // SpringDoc OpenAPI for API documentation
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.5'
 
-    // JUnit dependencies
+    // JUnit for unit testing
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
     testImplementation 'org.junit.platform:junit-platform-suite-api:1.11.4'
     testImplementation 'org.junit.platform:junit-platform-suite-engine:1.11.4'
 
-    // https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api
+    // Jakarta Validation API for validation support
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.1.1'
 
-
-    // Add these for AOT support with Mockito
+    // Mockito for mocking in tests
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'net.bytebuddy:byte-buddy'
     testImplementation 'org.springframework:spring-test'
 
-    // https://mvnrepository.com/artifact/software.amazon.awssdk/cognitoidentityprovider
+    // AWS SDK for Cognito Identity Provider
     implementation("software.amazon.awssdk:cognitoidentityprovider:2.31.6")
 
-
-    // Cucumber
+    // Cucumber for behavior-driven development (BDD)
     testImplementation 'io.cucumber:cucumber-java:7.11.1'
     testImplementation 'io.cucumber:cucumber-junit:7.11.1'
     testImplementation 'io.cucumber:cucumber-spring:7.11.1'
     testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.11.1'
 
+    // Spring Boot Starter Test for testing support
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
-// Redis TestContainer dependency
 
+    // Testcontainers for Redis
     testImplementation 'org.testcontainers:testcontainers:1.20.6'
     testImplementation 'org.testcontainers:junit-jupiter:1.20.6'
-
-    // https://mvnrepository.com/artifact/org.testcontainers/postgresql
     testImplementation 'org.testcontainers:postgresql:1.20.6'
 
-
-    // https://mvnrepository.com/artifact/com.redis.testcontainers/testcontainers-redis
+    // Testcontainers for Redis
     implementation 'com.redis.testcontainers:testcontainers-redis:1.6.4'
 
+    // MapStruct for object mapping
     implementation 'org.mapstruct:mapstruct:1.6.3'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
-
 }
+
 // Configure Cucumber task
 task cucumber() {
     dependsOn assemble, testClasses
@@ -117,9 +126,6 @@ task cucumber() {
     }
 }
 
-
 tasks.named('test') {
     useJUnitPlatform()
-
 }
-

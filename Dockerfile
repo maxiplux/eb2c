@@ -13,7 +13,6 @@ RUN chmod +x ./gradlew
 # Copy source code
 COPY ./src ./src
 
-
 # Build the application
 RUN ./gradlew build -x test
 

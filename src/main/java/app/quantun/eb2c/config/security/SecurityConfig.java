@@ -25,7 +25,17 @@ public class SecurityConfig {
     @Autowired
     private CustomOidcUserService customOidcUserService;
 
-
+    /**
+     * Configures the security filter chain.
+     *
+     * This method sets up the security filter chain for the application, including CSRF protection,
+     * authorization rules, OAuth2 login, and logout handling. The configurations are based on the
+     * application requirements and best practices for securing web applications.
+     *
+     * @param http the HttpSecurity object to configure
+     * @return SecurityFilterChain instance
+     * @throws Exception if an error occurs while configuring the security filter chain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -59,9 +69,6 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                 );
 
-
         return http.build();
     }
-
-
 }

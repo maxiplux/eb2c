@@ -16,6 +16,16 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class ModelMapperConfig {
+
+    /**
+     * Configures and provides a ModelMapper bean.
+     *
+     * This method sets up the ModelMapper with strict matching strategy and custom naming conventions.
+     * The strict matching strategy ensures that only exact matches between source and destination properties are mapped.
+     * The custom naming conventions are used to handle Lombok @Builder methods.
+     *
+     * @return ModelMapper instance
+     */
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
@@ -26,6 +36,14 @@ public class ModelMapperConfig {
         return modelMapper;
     }
 
+    /**
+     * Configures and provides a MappingJackson2HttpMessageConverter bean.
+     *
+     * This method customizes the Jackson ObjectMapper to disable writing dates as timestamps,
+     * use a specific date-time format, and include non-null properties only.
+     *
+     * @return MappingJackson2HttpMessageConverter instance
+     */
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         Jackson2ObjectMapperBuilder builder =
@@ -37,6 +55,15 @@ public class ModelMapperConfig {
         return new MappingJackson2HttpMessageConverter(builder.build());
     }
 
+    /**
+     * Customizes the Jackson2ObjectMapperBuilder.
+     *
+     * This method adds the JavaTimeModule to handle Java 8 date and time types,
+     * disables writing dates as timestamps, sets a specific date-time format,
+     * and configures the ObjectMapper to include non-null properties only.
+     *
+     * @return Jackson2ObjectMapperBuilderCustomizer instance
+     */
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         return builder -> {
@@ -47,8 +74,6 @@ public class ModelMapperConfig {
             builder.failOnUnknownProperties(false);
             builder.failOnEmptyBeans(false);
             builder.indentOutput(true);
-
         };
     }
-
 }
