@@ -10,13 +10,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
+/**
+ * Configuration class for OpenAPI 3.0 documentation.
+ *
+ * This class sets up the OpenAPI documentation for the application, including security schemes and API information.
+ * The configurations are based on the module name and API version provided in the application properties.
+ */
 @Configuration
 public class OpenApi30Config {
 
     private final String moduleName;
     private final String apiVersion;
 
+    /**
+     * Constructor to initialize module name and API version.
+     *
+     * @param moduleName the name of the module
+     * @param apiVersion the version of the API
+     */
     public OpenApi30Config(
             @Value("${module-name}") String moduleName,
             @Value("${api-version}") String apiVersion) {
@@ -24,6 +35,14 @@ public class OpenApi30Config {
         this.apiVersion = apiVersion;
     }
 
+    /**
+     * Bean to configure the OpenAPI documentation.
+     *
+     * This method sets up the OpenAPI documentation with a security scheme for bearer authentication and
+     * includes the module name and API version in the API title.
+     *
+     * @return OpenAPI instance with the configured settings
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";

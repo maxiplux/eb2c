@@ -10,7 +10,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 
 @Configuration
-
 public class AwsConfig {
 
     @Value("${aws.region}")
@@ -22,8 +21,16 @@ public class AwsConfig {
     @Value("${aws.secretKey:#{null}}")
     private String secretKey;
 
+    /**
+     * Creates a CognitoIdentityProviderClient bean.
+     * 
+     * This method configures the AWS Cognito client based on the provided AWS credentials.
+     * If the access key and secret key are provided, it uses them to create a static credentials provider.
+     * Otherwise, it falls back to the default credentials provider chain.
+     * 
+     * @return CognitoIdentityProviderClient instance
+     */
     @Bean
-
     public CognitoIdentityProviderClient cognitoClient() {
         if (accessKey != null && secretKey != null) {
             // Create credentials provider
