@@ -1,5 +1,5 @@
 # Build stage
-FROM eclipse-temurin:21-jdk AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /app
 
@@ -13,12 +13,11 @@ RUN chmod +x ./gradlew
 # Copy source code
 COPY ./src ./src
 
-
 # Build the application
 RUN ./gradlew build -x test
 
 # Runtime stage
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 

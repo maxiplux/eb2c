@@ -1,108 +1,95 @@
 package app.quantun.eb2c.exception;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Global exception handler for the application.
- * Uses RFC 7807 Problem Details for HTTP APIs.
+ *
+ * This class handles various exceptions that may occur during the execution of the application.
+ * It provides standardized error responses using ProblemDetail.
+ * The chosen exception handling strategy ensures that the application returns meaningful error messages
+ * and appropriate HTTP status codes for different types of errors.
  */
 @RestControllerAdvice
-@Tag(name = "Error Handling", description = "Global error handling for the API")
 public class GlobalExceptionHandler {
 
-    @Operation(summary = "Handle entity not found exceptions", 
-              description = "Processes exceptions when requested resources are not found")
-    @ApiResponse(responseCode = "404", description = "Resource not found", 
-                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ProblemDetail handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problemDetail.setTitle("Resource Not Found");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/not-found"));
-        problemDetail.setProperty("timestamp", Instant.now());
-        return problemDetail;
-    }
-
-    @Operation(summary = "Handle validation exceptions", 
-              description = "Processes exceptions when request data fails validation")
-    @ApiResponse(responseCode = "400", description = "Invalid input data", 
-                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    /**
+     * Handles validation exceptions.
+     *
+     * This method handles MethodArgumentNotValidException, which occurs when validation on an argument
+     * annotated with @Valid fails. It returns a ProblemDetail object with a BAD_REQUEST status and
+     * includes field-specific validation errors.
+     *
+     * @param ex the MethodArgumentNotValidException
+     * @return ProblemDetail object with validation error details
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        // Explicitly set title and detail
         problemDetail.setTitle("Validation Error");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/validation"));
-
-        Map<String, String> validationErrors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            validationErrors.put(fieldName, errorMessage);
-        });
-
-        problemDetail.setProperty("errors", validationErrors);
+        problemDetail.setDetail("Validation failed");
         problemDetail.setProperty("timestamp", Instant.now());
+
+        // Optional: Add field-specific validation errors
+        Map<String, String> fieldErrors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                fieldErrors.put(error.getField(), error.getDefaultMessage()));
+
+        problemDetail.setProperty("errors", fieldErrors);
+
         return problemDetail;
     }
 
-    @Operation(summary = "Handle constraint violation exceptions", 
-              description = "Processes exceptions when data constraints are violated")
-    @ApiResponse(responseCode = "400", description = "Constraint violation", 
-                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ProblemDetail handleConstraintViolationException(ConstraintViolationException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setTitle("Constraint Violation");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/constraint-violation"));
-
-        Map<String, String> constraintViolations = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation -> {
-            String propertyPath = violation.getPropertyPath().toString();
-            String message = violation.getMessage();
-            constraintViolations.put(propertyPath, message);
-        });
-
-        problemDetail.setProperty("violations", constraintViolations);
-        problemDetail.setProperty("timestamp", Instant.now());
-        return problemDetail;
-    }
-
-    @Operation(summary = "Handle general exceptions", 
-              description = "Processes all other unexpected exceptions")
-    @ApiResponse(responseCode = "500", description = "Internal server error", 
-                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ExceptionHandler(Exception.class)
-    public ProblemDetail handleGlobalException(Exception ex, WebRequest request) {
+    /**
+     * Handles entity not found exceptions.
+     *
+     * This method handles EntityNotFoundException, which occurs when an entity is not found in the database.
+     * It returns a ProblemDetail object with a NOT_FOUND status and includes the exception message.
+     *
+     * @param exception the EntityNotFoundException
+     * @param webRequest the ServletWebRequest
+     * @return ProblemDetail object with resource not found error details
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ProblemDetail handleEntityNotFoundException(EntityNotFoundException exception, ServletWebRequest webRequest) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred"
-        );
-        problemDetail.setTitle("Internal Server Error");
-        problemDetail.setType(URI.create("https://api.b2bcommerce.com/errors/internal-error"));
-        problemDetail.setProperty("timestamp", Instant.now());
-        problemDetail.setProperty("exception", ex.getClass().getSimpleName());
+                HttpStatus.NOT_FOUND, exception.getMessage());
 
-        // In production, you might want to hide the actual exception message for security reasons
-        // and just log it instead
-        problemDetail.setProperty("message", ex.getMessage());
+        problemDetail.setTitle("Resource Not Found");
+        problemDetail.setProperty("timestamp", System.currentTimeMillis());
+
+        return problemDetail;
+    }
+
+    /**
+     * Handles global exceptions.
+     *
+     * This method handles all other exceptions that are not specifically handled by other methods.
+     * It returns a ProblemDetail object with an INTERNAL_SERVER_ERROR status and a generic error message.
+     *
+     * @param exception the Exception
+     * @param webRequest the ServletWebRequest
+     * @return ProblemDetail object with internal server error details
+     */
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleGlobalException(Exception exception, ServletWebRequest webRequest) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+
+        problemDetail.setTitle("Internal Server Error");
+        problemDetail.setProperty("timestamp", System.currentTimeMillis());
 
         return problemDetail;
     }

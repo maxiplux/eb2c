@@ -4,7 +4,6 @@ import app.quantun.eb2c.model.entity.AuditModel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -36,7 +35,7 @@ public class Branch extends AuditModel<String> {
     @Column(nullable = true)
     private String email;
 
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id", nullable = false)
     @JsonIgnoreProperties(value = {"branches", "hibernateLazyInitializer", "handler"}, allowSetters = true)

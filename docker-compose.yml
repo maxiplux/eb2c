@@ -34,7 +34,7 @@ services:
 
     ports:
       - "6379:6379"
-    command: ["redis-server", "--appendonly", "yes"]
+    command: [ "redis-server", "--appendonly", "yes" ]
     restart: always
 volumes:
   postgres_data:
