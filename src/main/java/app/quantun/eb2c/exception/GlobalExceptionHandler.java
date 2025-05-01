@@ -1,5 +1,10 @@
 package app.quantun.eb2c.exception;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,8 +25,13 @@ import java.util.Map;
  * Uses RFC 7807 Problem Details for HTTP APIs.
  */
 @RestControllerAdvice
+@Tag(name = "Error Handling", description = "Global error handling for the API")
 public class GlobalExceptionHandler {
 
+    @Operation(summary = "Handle entity not found exceptions", 
+              description = "Processes exceptions when requested resources are not found")
+    @ApiResponse(responseCode = "404", description = "Resource not found", 
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     @ExceptionHandler(EntityNotFoundException.class)
     public ProblemDetail handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -31,6 +41,10 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    @Operation(summary = "Handle validation exceptions", 
+              description = "Processes exceptions when request data fails validation")
+    @ApiResponse(responseCode = "400", description = "Invalid input data", 
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -49,6 +63,10 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    @Operation(summary = "Handle constraint violation exceptions", 
+              description = "Processes exceptions when data constraints are violated")
+    @ApiResponse(responseCode = "400", description = "Constraint violation", 
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleConstraintViolationException(ConstraintViolationException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -67,6 +85,10 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    @Operation(summary = "Handle general exceptions", 
+              description = "Processes all other unexpected exceptions")
+    @ApiResponse(responseCode = "500", description = "Internal server error", 
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGlobalException(Exception ex, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(

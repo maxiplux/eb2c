@@ -2,7 +2,7 @@ package app.quantun.eb2c;
 
 
 import app.quantun.eb2c.model.entity.bussines.Category;
-import app.quantun.eb2c.model.entity.bussines.CategoryRepository;
+import app.quantun.eb2c.repository.CategoryRepository;
 import app.quantun.eb2c.model.entity.bussines.Product;
 import app.quantun.eb2c.model.entity.core.Role;
 import app.quantun.eb2c.model.entity.core.User;
