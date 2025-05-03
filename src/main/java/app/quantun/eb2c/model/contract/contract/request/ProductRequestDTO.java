@@ -1,5 +1,8 @@
-package app.quantun.eb2c.model.contract.response;
+package app.quantun.eb2c.model.contract.contract.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,23 +11,22 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * Data Transfer Object for Product responses.
- * This class is used to transfer product data between the server and the client.
+ * Data Transfer Object for Product requests.
+ * This class is used to transfer product data between the client and the server.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponseDTO {
+public class ProductRequestDTO {
 
-    /**
-     * The ID of the product.
-     */
     private Long id;
-
     /**
      * The name of the product.
+     * It must not be blank and its length must not exceed 255 characters.
      */
+    @NotBlank(message = "{product.name.required}")
+    @Size(max = 255, message = "{product.name.maxLength}")
     private String name;
 
     /**
@@ -34,7 +36,9 @@ public class ProductResponseDTO {
 
     /**
      * The price of the product.
+     * It must be a positive value.
      */
+    @Positive(message = "{product.price.positive}")
     private BigDecimal price;
 
     /**

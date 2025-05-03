@@ -1,4 +1,4 @@
-package app.quantun.eb2c.model.contract.request;
+package app.quantun.eb2c.model.contract.contract.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

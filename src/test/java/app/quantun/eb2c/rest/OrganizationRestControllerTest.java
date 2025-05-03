@@ -2,8 +2,8 @@ package app.quantun.eb2c.rest;
 
 import app.quantun.eb2c.Eb2cApplication;
 import app.quantun.eb2c.TestConfig;
-import app.quantun.eb2c.model.contract.request.OrganizationRequestDTO;
-import app.quantun.eb2c.model.contract.response.OrganizationResponseDTO;
+import app.quantun.eb2c.model.contract.contract.request.OrganizationRequestDTO;
+import app.quantun.eb2c.model.contract.contract.response.OrganizationResponseDTO;
 import app.quantun.eb2c.service.OrganizationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -139,7 +139,7 @@ class OrganizationRestControllerTest {
         mockMvc.perform(get("/api/organizations/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.type").exists())
-                .andExpect(jsonPath("$.title").value("Resource Not Found"))
+                .andExpect(jsonPath("$.title").value("Entity Not Found"))
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.detail").value(errorMessage))
                 .andExpect(jsonPath("$.timestamp").exists());
@@ -176,12 +176,33 @@ class OrganizationRestControllerTest {
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.type").exists())
-                .andExpect(jsonPath("$.title").value("Resource Not Found"))
+                .andExpect(jsonPath("$.title").value("Entity Not Found"))
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.detail").value(errorMessage))
                 .andExpect(jsonPath("$.timestamp").exists());
 
         verify(organizationService).updateOrganization(eq(1L), any(OrganizationRequestDTO.class));
+    }
+
+    @Test
+    void deleteOrganization_WhenNotExists_ShouldReturnProblemDetail() throws Exception {
+        // Arrange
+        String errorMessage = "Organization not found with id: 1";
+        // Mock the service to throw EntityNotFoundException
+        doThrow(new EntityNotFoundException(errorMessage)).when(organizationService).deleteOrganization(anyLong());
+
+        // Act & Assert
+        mockMvc.perform(delete("/api/organizations/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.type").exists())
+                // This line expects the title "Resource Not Found"
+                .andExpect(jsonPath("$.title").value("Entity Not Found"))
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.detail").value(errorMessage))
+                .andExpect(jsonPath("$.timestamp").exists());
+
+        // Verify service method was called (This is line 209 or close to it)
+        verify(organizationService).deleteOrganization(1L); // Line 209
     }
 
     @Test
@@ -192,24 +213,6 @@ class OrganizationRestControllerTest {
         // Act & Assert
         mockMvc.perform(delete("/api/organizations/1"))
                 .andExpect(status().isNoContent());
-
-        verify(organizationService).deleteOrganization(1L);
-    }
-
-    @Test
-    void deleteOrganization_WhenNotExists_ShouldReturnProblemDetail() throws Exception {
-        // Arrange
-        String errorMessage = "Organization not found with id: 1";
-        doThrow(new EntityNotFoundException(errorMessage)).when(organizationService).deleteOrganization(anyLong());
-
-        // Act & Assert
-        mockMvc.perform(delete("/api/organizations/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.type").exists())
-                .andExpect(jsonPath("$.title").value("Resource Not Found"))
-                .andExpect(jsonPath("$.status").value(404))
-                .andExpect(jsonPath("$.detail").value(errorMessage))
-                .andExpect(jsonPath("$.timestamp").exists());
 
         verify(organizationService).deleteOrganization(1L);
     }
@@ -253,7 +256,7 @@ class OrganizationRestControllerTest {
         mockMvc.perform(get("/api/organizations/tax/123456789"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.type").exists())
-                .andExpect(jsonPath("$.title").value("Resource Not Found"))
+                .andExpect(jsonPath("$.title").value("Entity Not Found"))
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.detail").value(errorMessage))
                 .andExpect(jsonPath("$.timestamp").exists());

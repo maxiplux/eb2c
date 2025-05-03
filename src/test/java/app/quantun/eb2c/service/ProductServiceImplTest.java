@@ -1,8 +1,8 @@
 package app.quantun.eb2c.service;
 
-import app.quantun.eb2c.model.contract.request.ProductRequestDTO;
-import app.quantun.eb2c.model.contract.request.ProductSearchCriteria;
-import app.quantun.eb2c.model.contract.response.ProductResponseDTO;
+import app.quantun.eb2c.model.contract.contract.request.ProductRequestDTO;
+import app.quantun.eb2c.model.contract.contract.request.ProductSearchCriteria;
+import app.quantun.eb2c.model.contract.contract.response.ProductResponseDTO;
 import app.quantun.eb2c.model.entity.bussines.Product;
 import app.quantun.eb2c.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,7 @@
 package app.quantun.eb2c;
 
-import app.quantun.eb2c.model.entity.bussines.CategoryRepository;
+
+import app.quantun.eb2c.repository.CategoryRepository;
 import app.quantun.eb2c.repository.ProductRepository;
 import app.quantun.eb2c.rest.UserController;
 import app.quantun.eb2c.service.CognitoUserService;

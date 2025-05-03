@@ -89,11 +89,12 @@ src/
  │   │       ├── controller/      (REST controllers)
  │   │       ├── service/         (Business logic services)
  │   │       ├── repository/      (Data access repositories)
- │   │       ├── model/           (Entities) 
+ │   │       ├── model/            
+ │   │       │        ├── entity/ (Entities)
  │   │       ├── model/contract/
- │   │       │   ├── response/    (DTOs for responses)
- │   │       │   ├── request/     (DTOs for requests)
- │   │       │   └── dto/         (DTOs for internal use)
+ │   │       │        ├── response/    (DTOs for responses)
+ │   │       │        ├── request/     (DTOs for requests)
+ │   │       │        └── dto/         (DTOs for internal use)
  │   │       ├── exception/       (Custom exceptions)
  │   │       └── util/            (Utility classes)
  │   └── resources/
@@ -110,7 +111,7 @@ src/
          └── application-test.properties or application-test.yml
 ```
 
-- **Root Package**: Use a meaningful root package name (e.g., `com.company.appname`)
+- **Root Package**: Use a meaningful root package name (e.g., `app.quantun.eb2c`)
 - **Modularization**: For larger applications, consider breaking down the application into modules based on business domains
 
 ## 2. Controllers

@@ -1,8 +1,8 @@
 package app.quantun.eb2c.service;
 
 import app.quantun.eb2c.cucumber.steps.OrganizationServiceSteps;
-import app.quantun.eb2c.model.contract.request.OrganizationRequestDTO;
-import app.quantun.eb2c.model.contract.response.OrganizationResponseDTO;
+import app.quantun.eb2c.model.contract.contract.request.OrganizationRequestDTO;
+import app.quantun.eb2c.model.contract.contract.response.OrganizationResponseDTO;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;

@@ -1,7 +1,7 @@
 package app.quantun.eb2c.mapper;
 
-import app.quantun.eb2c.model.contract.request.OrganizationRequestDTO;
-import app.quantun.eb2c.model.contract.response.OrganizationResponseDTO;
+import app.quantun.eb2c.model.contract.contract.request.OrganizationRequestDTO;
+import app.quantun.eb2c.model.contract.contract.response.OrganizationResponseDTO;
 import app.quantun.eb2c.model.entity.bussines.Organization;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
