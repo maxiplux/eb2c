@@ -1,29 +1,37 @@
 package app.quantun.eb2c.config.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 @Slf4j
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private CustomAuthenticationSuccessHandler successHandler;
+    @Value("${spring.web.cors.allowed-origins}")
+    private String allowedOrigins;
+    @Value("${spring.web.cors.allowed-methods}")
+    private String allowedMethods;
+    @Value("${spring.web.cors.allowed-headers}")
+    private String allowedHeaders;
 
-    @Autowired
-    private CustomLogoutSuccessHandler logoutSuccessHandler;
 
-    @Autowired
-    private CustomOidcUserService customOidcUserService;
 
     /**
      * Configures the security filter chain.
@@ -38,37 +46,54 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
+        return http
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Permit static resources and SAML endpoints
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/public/**",
+                        .requestMatchers(
+                                "/css/**", "/js/**", "/images/**", "/public/**",
                                 "/media/**", "/custom-login", "/login", "/custom-logout",
                                 "/login/oauth2/**",
                                 "v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
                                 "/app/login/**", "/app/logout/**",
                                 "/", "/error/**",
-                                "api/**", "/actuator/**",
-                                "/saml2/**").permitAll()
-                        .requestMatchers("/dashboard").authenticated()
+                                "/actuator/**"
+                        ).permitAll()
+
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(saml2 -> saml2
-                        // .loginPage("/custom-login")
-                        .defaultSuccessUrl("/dashboard")
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
-                        .successHandler(successHandler)
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout/saml2/slo")
-                        .logoutSuccessHandler(logoutSuccessHandler)
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .logoutSuccessUrl("/custom-login")
-                        .deleteCookies("JSESSIONID")
-                );
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        )
+                ).build();
 
-        return http.build();
     }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("cognito:groups");
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
+        configuration.setAllowedMethods(Arrays.asList(allowedMethods.split(",")));
+        configuration.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+
 }

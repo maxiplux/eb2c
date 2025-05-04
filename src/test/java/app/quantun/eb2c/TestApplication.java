@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class,
@@ -41,10 +40,6 @@ public class TestApplication {
         return Mockito.mock(JpaMetamodelMappingContext.class);
     }
 
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        return Mockito.mock(ClientRegistrationRepository.class);
-    }
 
     @Bean
     public UserController userController(CognitoUserService userService) {
