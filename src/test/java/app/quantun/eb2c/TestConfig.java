@@ -19,6 +19,8 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -26,6 +28,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.sql.DataSource;
 import java.util.Optional;
 import java.util.Properties;
@@ -91,7 +94,7 @@ public class TestConfig {
     @Bean
     @Primary
     public DataSource dataSource() {
-        PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
+        PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
                 .withDatabaseName("testdb")
                 .withUsername("test")
                 .withPassword("test");
@@ -118,6 +121,13 @@ public class TestConfig {
         redisConfig.setPort(redis.getMappedPort(6379));
 
         return new LettuceConnectionFactory(redisConfig);
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        // Using a simple symmetric key for testing purposes
+        SecretKeySpec secretKey = new SecretKeySpec("testsecrettestsecrettestsecrettestsecret".getBytes(), "HmacSHA256");
+        return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 
 
