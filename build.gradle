@@ -39,8 +39,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     // Spring Boot Starter Security for security features
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    // Spring Boot Starter OAuth2 Client for OAuth2 client support
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
+
     // Liquibase for database schema management
     implementation 'org.liquibase:liquibase-core'
     // Spring Boot DevTools for development-time features

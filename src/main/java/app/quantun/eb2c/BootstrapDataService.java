@@ -2,8 +2,8 @@ package app.quantun.eb2c;
 
 
 import app.quantun.eb2c.model.entity.bussines.Category;
-import app.quantun.eb2c.repository.CategoryRepository;
 import app.quantun.eb2c.model.entity.bussines.Product;
+import app.quantun.eb2c.repository.CategoryRepository;
 import app.quantun.eb2c.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,7 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@org.springframework.core.annotation.Order(1)
 public class BootstrapDataService implements CommandLineRunner {
 
 
