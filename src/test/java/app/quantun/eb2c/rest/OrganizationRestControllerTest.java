@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -148,6 +149,7 @@ class OrganizationRestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void updateOrganization_WhenExists_ShouldReturnUpdatedOrganization() throws Exception {
         // Arrange
         when(organizationService.updateOrganization(anyLong(), any(OrganizationRequestDTO.class))).thenReturn(responseDTO);
@@ -164,6 +166,7 @@ class OrganizationRestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void updateOrganization_WhenNotExists_ShouldReturnProblemDetail() throws Exception {
         // Arrange
         String errorMessage = "Organization not found with id: 1";
@@ -185,6 +188,7 @@ class OrganizationRestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void deleteOrganization_WhenNotExists_ShouldReturnProblemDetail() throws Exception {
         // Arrange
         String errorMessage = "Organization not found with id: 1";
