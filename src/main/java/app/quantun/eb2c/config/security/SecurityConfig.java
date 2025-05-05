@@ -32,10 +32,9 @@ public class SecurityConfig {
     private String allowedHeaders;
 
 
-
     /**
      * Configures the security filter chain.
-     *
+     * <p>
      * This method sets up the security filter chain for the application, including CSRF protection,
      * authorization rules, OAuth2 login, and logout handling. The configurations are based on the
      * application requirements and best practices for securing web applications.
@@ -47,6 +46,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .securityMatcher("/**") // Use securityMatcher to specify which requests this chain applies to
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

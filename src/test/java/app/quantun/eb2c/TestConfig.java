@@ -1,10 +1,5 @@
 package app.quantun.eb2c;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +14,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -28,23 +21,15 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-import javax.crypto.spec.SecretKeySpec;
 import javax.sql.DataSource;
 import java.util.Optional;
 import java.util.Properties;
 
 @Configuration
-@EnableAutoConfiguration(exclude = {
-        SecurityAutoConfiguration.class,
-        SecurityFilterAutoConfiguration.class,
-        OAuth2ClientAutoConfiguration.class,
-        OAuth2ResourceServerAutoConfiguration.class
-})
 @TestConfiguration
 @EnableJpaAuditing(auditorAwareRef = "testAuditorProvider")
 @EnableJpaRepositories(basePackages = "app.quantun.eb2c.repository")
 @EnableTransactionManagement
-
 public class TestConfig {
     @Bean
     public static DefaultTransactionDefinition transactionDefinition() {
@@ -73,7 +58,7 @@ public class TestConfig {
 
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
@@ -121,13 +106,6 @@ public class TestConfig {
         redisConfig.setPort(redis.getMappedPort(6379));
 
         return new LettuceConnectionFactory(redisConfig);
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        // Using a simple symmetric key for testing purposes
-        SecretKeySpec secretKey = new SecretKeySpec("testsecrettestsecrettestsecrettestsecret".getBytes(), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 
 

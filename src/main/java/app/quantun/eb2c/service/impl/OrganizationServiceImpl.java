@@ -1,10 +1,11 @@
-package app.quantun.eb2c.service;
+package app.quantun.eb2c.service.impl;
 
 import app.quantun.eb2c.mapper.OrganizationMapper;
 import app.quantun.eb2c.model.contract.contract.request.OrganizationRequestDTO;
 import app.quantun.eb2c.model.contract.contract.response.OrganizationResponseDTO;
 import app.quantun.eb2c.model.entity.bussines.Organization;
 import app.quantun.eb2c.repository.OrganizationRepository;
+import app.quantun.eb2c.service.OrganizationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

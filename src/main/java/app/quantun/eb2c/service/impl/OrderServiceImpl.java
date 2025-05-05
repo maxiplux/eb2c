@@ -1,4 +1,4 @@
-package app.quantun.eb2c.service;
+package app.quantun.eb2c.service.impl;
 
 import app.quantun.eb2c.exception.OrderNotFoundException;
 import app.quantun.eb2c.mapper.OrderMapper;
@@ -11,6 +11,7 @@ import app.quantun.eb2c.repository.BranchRepository;
 import app.quantun.eb2c.repository.OrderRepository;
 import app.quantun.eb2c.repository.OrganizationRepository;
 import app.quantun.eb2c.repository.ProductRepository;
+import app.quantun.eb2c.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

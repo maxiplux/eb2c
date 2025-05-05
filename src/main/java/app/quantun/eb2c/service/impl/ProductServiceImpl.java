@@ -1,4 +1,4 @@
-package app.quantun.eb2c.service;
+package app.quantun.eb2c.service.impl;
 
 
 import app.quantun.eb2c.model.contract.contract.request.ProductRequestDTO;
@@ -6,6 +6,7 @@ import app.quantun.eb2c.model.contract.contract.request.ProductSearchCriteria;
 import app.quantun.eb2c.model.contract.contract.response.ProductResponseDTO;
 import app.quantun.eb2c.model.entity.bussines.Product;
 import app.quantun.eb2c.repository.ProductRepository;
+import app.quantun.eb2c.service.ProductService;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

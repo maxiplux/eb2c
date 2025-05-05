@@ -5,7 +5,7 @@ import app.quantun.eb2c.model.contract.contract.request.GroupRequest;
 import app.quantun.eb2c.model.contract.contract.request.PaginationRequest;
 import app.quantun.eb2c.model.contract.contract.response.GroupResponse;
 import app.quantun.eb2c.model.contract.contract.response.PagedResponse;
-import app.quantun.eb2c.service.CognitoGroupService;
+import app.quantun.eb2c.service.impl.CognitoGroupServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +26,7 @@ import java.util.List;
 @Tag(name = "Groups", description = "API for group management in AWS Cognito")
 public class GroupController {
 
-    private final CognitoGroupService groupService;
+    private final CognitoGroupServiceImpl groupService;
 
     @Operation(summary = "Create a new group", description = "Creates a new group in the Cognito user pool")
     @ApiResponses({
